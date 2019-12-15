@@ -7,12 +7,16 @@ import "./styles.css";
 function App() {
   const [data, setData] = useState({ hits: [] });
 
-  useEffect(async () => {
-    const result = await axios(
-      "https://hn.algolia.com/api/v1/search?query=react native"
-    );
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(
+        "https://hn.algolia.com/api/v1/search?query=react native"
+      );
 
-    setData(result.data);
+      setData(result.data);
+    };
+
+    fetchData();
   }, []);
 
   return (
