@@ -1,36 +1,59 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { Fragment, useState, useEffect, useReducer } from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-
 import "./styles.css";
 
+const dataFetchReducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_INIT":
+      return {
+        ...state,
+        isLoading: true,
+        isError: false
+      };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload
+      };
+    case "FETCH_FAILURE":
+      return {
+        ...state,
+        isLoading: false,
+        isError: true
+      };
+    default:
+      throw new Error();
+  }
+};
+
 const useDataApi = (initialUrl, initialData) => {
-  const [data, setData] = useState(initialData);
-  const [url, doFetch] = useState(initialUrl);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [url, setUrl] = useState(initialUrl);
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    data: initialData
+  });
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsError(false);
-      setIsLoading(true);
+      dispatch({ type: "FETCH_INIT" });
 
       try {
         const result = await axios(url);
 
-        setData(result.data);
+        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
       } catch (error) {
-        setIsError(true);
-        setData({ hits: [] });
+        dispatch({ type: "FETCH_FAILURE" });
       }
-
-      setIsLoading(false);
     };
 
     fetchData();
   }, [url]);
 
-  return [{ data, isLoading, isError }, doFetch];
+  return [state, setUrl];
 };
 
 function App() {
