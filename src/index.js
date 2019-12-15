@@ -13,7 +13,7 @@ function App() {
     );
 
     setData(result.data);
-  });
+  }, []);
 
   return (
     <ul>
