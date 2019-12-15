@@ -4,10 +4,9 @@ import axios from "axios";
 
 import "./styles.css";
 
-function App() {
+const useHackerNewsApi = () => {
   const [data, setData] = useState({ hits: [] });
-  const [query, setQuery] = useState("react native");
-  const [url, setUrl] = useState(
+  const [url, doFetch] = useState(
     "https://hn.algolia.com/api/v1/search?query=react native"
   );
   const [isLoading, setIsLoading] = useState(false);
@@ -33,11 +32,18 @@ function App() {
     fetchData();
   }, [url]);
 
+  return [{ data, isLoading, isError }, doFetch];
+};
+
+function App() {
+  const [query, setQuery] = useState("react native");
+  const [{ data, isLoading, isError }, doFetch] = useHackerNewsApi();
+
   return (
     <Fragment>
       <form
         onSubmit={event => {
-          setUrl(`https://hn.algolia.com/api/v1/search?query=${query}`);
+          doFetch(`https://hn.algolia.com/api/v1/search?query=${query}`);
           event.preventDefault();
         }}
       >
