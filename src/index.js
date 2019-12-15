@@ -4,11 +4,9 @@ import axios from "axios";
 
 import "./styles.css";
 
-const useHackerNewsApi = () => {
-  const [data, setData] = useState({ hits: [] });
-  const [url, doFetch] = useState(
-    "https://hn.algolia.com/api/v1/search?query=react native"
-  );
+const useDataApi = (initialUrl, initialData) => {
+  const [data, setData] = useState(initialData);
+  const [url, doFetch] = useState(initialUrl);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -37,7 +35,10 @@ const useHackerNewsApi = () => {
 
 function App() {
   const [query, setQuery] = useState("react native");
-  const [{ data, isLoading, isError }, doFetch] = useHackerNewsApi();
+  const [{ data, isLoading, isError }, doFetch] = useDataApi(
+    `https://hn.algolia.com/api/v1/search?query=${query}`,
+    { hits: [] }
+  );
 
   return (
     <Fragment>
